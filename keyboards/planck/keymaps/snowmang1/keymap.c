@@ -96,14 +96,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |ISO ~ |ISO | | Home | End  |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      |      |      |      |      |             |      | Next | Vol- | Vol+ | Play |
+ * |      |      |      |      |      |             |RAISE | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
  */
 [_LOWER] = LAYOUT_planck_grid(
     KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR,    KC_ASTR,    KC_LPRN, KC_RPRN, KC_BSPC,
     KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_UNDS,    KC_PLUS,    KC_LCBR, KC_RCBR, KC_PIPE,
     _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  S(KC_NUHS), S(KC_NUBS), KC_HOME, KC_END,  _______,
-    _______, _______, _______, _______, _______, _______, _______, _______,    KC_LEFT,    KC_VOLD, KC_VOLU, KC_RIGHT
+    _______, _______, _______, _______, _______, _______, _______, _______,    KC_MNXT,    KC_VOLD, KC_VOLU, KC_MPLY
 ),
 
 /* Raise
@@ -114,14 +114,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------+------+------+------+------+------+------|
  * |      |  F7  |  F8  |  F9  |  F10 |  F11 |  F12 |ISO # |ISO / |Pg Up |Pg Dn |      |
  * |------+------+------+------+------+------+------+------+------+------+------+------|
- * |      | CAPS |      |      |      |             |      | Next | Vol- | Vol+ | Play |
+ * |CAPWRD| CAPS |      |      |      |             |      | Next | Vol- | Vol+ | Play |
  * `-----------------------------------------------------------------------------------'
  */
 [_RAISE] = LAYOUT_planck_grid(
     KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_F2,    KC_F3,  KC_F4,   KC_F5,   KC_F6,   KC_BSPC,
     KC_DEL,  KC_6,    KC_7,    KC_8,    KC_9,    KC_0, 	 _______,  KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS,
     _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NUHS, KC_NUBS, KC_PGUP, KC_PGDN, _______,
-    _______, KC_CAPS, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
+    CAPSWRD, KC_CAPS, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
 ),
 
 /* Plover layer (http://opensteno.org)
@@ -191,35 +191,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
       if (record->event.pressed) {
 	#ifdef RGBLIGHT_ENABLE
 	      if(CAP == 0) {
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[0]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[1]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[2]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[3]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[4]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[5]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[6]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[7]);
-		      sethsv(HSV_PURPLE, (LED_TYPE *)&led[8]);
-		      rgblight_set(); // Utility functions do not call rgblight_set() automatically, so they need to be called explicitly.
+			rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+			rgblight_sethsv_noeeprom(HSV_PURPLE);
+			rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
 			CAP = 1;
 	      }
 	      else {
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[0]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[1]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[2]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[3]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[4]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[5]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[6]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[7]);
-		      sethsv(HSV_AZURE, (LED_TYPE *)&led[8]);
-		      rgblight_set(); // Utility functions do not call rgblight_set() automatically, so they need to be called explicitly.
+			rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+			rgblight_sethsv_noeeprom(HSV_AZURE);
+			rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
 			CAP = 0;
 	      }
         #endif
       }
       return true; // let qmk send caps event
       break;
+    case QK_BOOT:
+      if (record->event.pressed) {
+	#ifdef RGBLIGHT_ENABLE
+			rgblight_enable_noeeprom(); // Enables RGB, without saving settings
+			rgblight_sethsv_noeeprom(HSV_RED);
+			rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
+        #endif
+      }
     case BACKLIT:
       if (record->event.pressed) {
         register_code(KC_RSFT);
