@@ -38,6 +38,14 @@ enum planck_keycodes {
   EXT_PLV
 };
 
+enum window_managment_keys {
+  WIN_LEFT, WIN_RIGHT, WIN_UP , WIN_DOWN,
+  WIN_TLC , WIN_TRC  , WIN_BLC, WIN_BRC ,
+  WIN_L3  , WIN_L1   , WIN_C  , WIN_R3  , WIN_R1 ,
+  WIN_NEXT, WIN_PREV , WIN_MAX,  WIN_MIN, WIN_CTR,
+  WIN_RESTORE
+};
+
 // starting lighting
 #ifdef RGBLIGHT_ENABLE
 void keyboard_post_init_user(void) {
@@ -47,8 +55,9 @@ void keyboard_post_init_user(void) {
 }
 #endif
 
-#define LOWER MO(_LOWER)
-#define RAISE MO(_RAISE)
+#define LOWER  MO(_LOWER)
+#define RAISE  MO(_RAISE)
+#define WINDOW MO( _WIN ) //window managment layer
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -214,6 +223,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
         #endif
       }
+	  return true;
+	  break;
     case BACKLIT:
       if (record->event.pressed) {
         register_code(KC_RSFT);
